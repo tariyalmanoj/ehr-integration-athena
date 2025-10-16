@@ -1,0 +1,31 @@
+{
+  "name": "@athena-api/core",
+  "version": "1.0.0",
+  "description": "Core authentication and HTTP client for athenahealth APIs",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src/**/*.js"
+  },
+  "keywords": [
+    "athenahealth",
+    "oauth",
+    "http-client",
+    "healthcare",
+    "ehr"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "qs": "^6.11.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "eslint": "^8.50.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

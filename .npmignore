@@ -1,0 +1,13 @@
+# .npmignore
+.env
+.env.*
+*.log
+test/
+tests/
+*.test.js
+.github/
+examples/
+docs/
+coverage/
+.DS_Store
+node_modules/

@@ -1,0 +1,15 @@
+{
+  "name": "@athena-api/encounters",
+  "version": "1.0.0",
+  "description": "Encounter management APIs for athenahealth",
+  "main": "src/index.js",
+  "peerDependencies": {
+    "@athena-api/core": "^1.0.0"
+  },
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src/**/*.js"
+  },
+  "keywords": ["athenahealth", "encounters", "visits"],
+  "license": "MIT"
+}

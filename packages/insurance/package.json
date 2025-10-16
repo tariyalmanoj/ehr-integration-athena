@@ -1,0 +1,15 @@
+{
+  "name": "@athena-api/insurance",
+  "version": "1.0.0",
+  "description": "Insurance management APIs for athenahealth",
+  "main": "src/index.js",
+  "peerDependencies": {
+    "@athena-api/core": "^1.0.0"
+  },
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src/**/*.js"
+  },
+  "keywords": ["athenahealth", "insurance", "eligibility"],
+  "license": "MIT"
+}

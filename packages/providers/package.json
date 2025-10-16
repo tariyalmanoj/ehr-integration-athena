@@ -1,0 +1,15 @@
+{
+  "name": "@athena-api/providers",
+  "version": "1.0.0",
+  "description": "Provider management APIs for athenahealth",
+  "main": "src/index.js",
+  "peerDependencies": {
+    "@athena-api/core": "^1.0.0"
+  },
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src/**/*.js"
+  },
+  "keywords": ["athenahealth", "providers", "physicians"],
+  "license": "MIT"
+}

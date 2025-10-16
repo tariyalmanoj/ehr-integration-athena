@@ -1,0 +1,15 @@
+{
+  "name": "@athena-api/billing",
+  "version": "1.0.0",
+  "description": "Billing and payment APIs for athenahealth",
+  "main": "src/index.js",
+  "peerDependencies": {
+    "@athena-api/core": "^1.0.0"
+  },
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src/**/*.js"
+  },
+  "keywords": ["athenahealth", "billing", "payments"],
+  "license": "MIT"
+}
