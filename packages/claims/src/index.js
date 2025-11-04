@@ -1,8 +1,15 @@
 const { BaseResource } = require('@athena-api/core');
+const Joi = require('joi');
+const querystring = require("querystring");
 
 class ClaimResource extends BaseResource {
   // Get claim by ID
   async getClaim(claimId, params = {}) {
+    const schema = Joi.string().required();
+    const { error } = schema.validate(claimId);
+    if (error) {
+      throw new Error(`Invalid claimId: ${error.message}`);
+    }
     return this.client.get(this.buildEndpoint(`/claims/${claimId}`), params);
   }
 
@@ -13,16 +20,50 @@ class ClaimResource extends BaseResource {
 
   // Create claim
   async createClaim(claimData) {
+    const claim = querystring.parse(claimData);
+    const schema = Joi.object({
+      patientid: Joi.number().required(),
+      departmentid: Joi.number().required(),
+      supervisingproviderid: Joi.number().required(),
+      claimcharges: Joi.array()
+        .items(
+          Joi.object({
+            procedurecode: Joi.string().required(),
+            icd10code1: Joi.string().required(),
+            icd10code2: Joi.string().optional(),
+            icd10code3: Joi.string().optional(),
+            icd10code4: Joi.string().optional(),
+            icd10code5: Joi.string().optional(),
+            icd10code6: Joi.string().optional(),
+          }),
+        )
+        .min(1)
+        .required(),
+    }).required().unknown(true);
+    const { error } = schema.validate({...claim, claimcharges: JSON.parse(claim.claimcharges)});
+    if (error) {
+      throw new Error(`Invalid claimData: ${error.message}`);
+    }
     return this.client.post(this.buildEndpoint('/claims'), claimData);
   }
 
   // Update claim
   async updateClaim(claimId, claimData) {
+    const schema = Joi.string().required();
+    const { error } = schema.validate(claimId);
+    if (error) {
+      throw new Error(`Invalid claimId: ${error.message}`);
+    }
     return this.client.put(this.buildEndpoint(`/claims/${claimId}`), claimData);
   }
 
   // Delete claim
   async deleteClaim(claimId) {
+    const schema = Joi.string().required();
+    const { error } = schema.validate(claimId);
+    if (error) {
+      throw new Error(`Invalid claimId: ${error.message}`);
+    }
     return this.client.delete(this.buildEndpoint(`/claims/${claimId}`));
   }
 
@@ -35,7 +76,7 @@ class ClaimResource extends BaseResource {
   async getClosedPatientClaims(patientId, params = {}) {
     return this.client.get(
       this.buildEndpoint(`/patients/${patientId}/claims/closed`),
-      params
+      params,
     );
   }
 
@@ -88,7 +129,7 @@ class ClaimResource extends BaseResource {
   async uploadClaimAttachment(claimId, attachmentData) {
     return this.client.post(
       this.buildEndpoint(`/claims/${claimId}/attachments`),
-      attachmentData
+      attachmentData,
     );
   }
 

@@ -41,7 +41,7 @@ class AthenaClient {
     this.environment = config.environment;
     
     // Configuration options
-    this.timeout = config.timeout || 30000;
+    this.timeout = config.timeout || 60000;
     this.maxRetries = config.maxRetries || 3;
     this.debug = config.debug || false;
     
@@ -74,7 +74,7 @@ class AthenaClient {
     const client = axios.create({
       baseURL: this.baseUrl,
       timeout: this.timeout,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': "application/x-www-form-urlencoded" }
     });
 
     // Request interceptor
@@ -161,7 +161,7 @@ class AthenaClient {
     // Categorize errors by status code
     switch (status) {
       case 400:
-        message = `Bad Request: ${data.error_description || data.message || 'Invalid parameters'}`;
+        message = `Bad Request: ${data.error || data.error_description || data.message || 'Invalid parameters'}`;
         context.type = 'VALIDATION_ERROR';
         break;
       case 401:

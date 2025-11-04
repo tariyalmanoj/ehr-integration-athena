@@ -50,7 +50,7 @@ class BillingResource extends BaseResource {
   async getPatientBalance(patientId, departmentId) {
     return this.client.get(
       this.buildEndpoint(`/patients/${patientId}/collectionsbalance`),
-      { departmentid: departmentId }
+      { departmentid: departmentId },
     );
   }
 
@@ -63,7 +63,7 @@ class BillingResource extends BaseResource {
   async createPaymentPlan(patientId, planData) {
     return this.client.post(
       this.buildEndpoint(`/patients/${patientId}/paymentplans`),
-      planData
+      planData,
     );
   }
 

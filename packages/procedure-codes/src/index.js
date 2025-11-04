@@ -1,4 +1,5 @@
 const { BaseResource } = require('@athena-api/core');
+const Joi = require('joi');
 
 class ProcedureCodeResource extends BaseResource {
   // Search procedure codes
@@ -54,6 +55,18 @@ class ProcedureCodeResource extends BaseResource {
   // Get RxNorm codes
   async searchRxNormCodes(params) {
     return this.client.get(this.buildEndpoint('/reference/rxnorm'), params);
+  }
+
+  // Get Procedure code with fee schedule
+  async getProcedureCodeWithFee(params) {
+    const schema = Joi.object({
+      departmentid: Joi.number().required(),
+      insurancepackageid: Joi.number().required(),
+      procedurecode: Joi.string().required(),
+    });
+    const { error } = schema.validate(params);
+    if (error) throw new Error(`Invalid input: ${error.message}`);
+    return this.client.get(this.buildEndpoint('/feeschedules/checkprocedure'), params);
   }
 }
 

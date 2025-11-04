@@ -45,14 +45,12 @@ describe('ClaimResource', () => {
 
   describe('createClaim', () => {
     test('should create claim', async () => {
-      const claimData = { patientid: '123', departmentid: '1' };
+      const claimData = { patientid: '123', departmentid: '1', supervisingproviderid: '45', claimcharges: [{procedurecode:"2343", icd10code1:"ES" }] };
       mockClient.post.mockResolvedValue({ claimid: '456' });
-      
       await claims.createClaim(claimData);
-      
       expect(mockClient.post).toHaveBeenCalledWith(
         '/v1/195900/claims',
-        claimData
+        claimData,
       );
     });
   });
