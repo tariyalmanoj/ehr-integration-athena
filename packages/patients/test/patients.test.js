@@ -46,72 +46,66 @@ describe('PatientResource', () => {
 
     describe('searchPatients', () => {
       test('should search patients with firstname and lastname', async () => {
-        const params = { firstname: 'John', lastname: 'Doe' };
-        mockClient.get.mockResolvedValue({ 
+        const params = {
+          firstname: 'John', lastname: 'Doe', departmentid: 1, ssn: '777777777', dob: '1980-01-01' 
+        };
+        mockClient.get.mockResolvedValue({
           patients: [{ patientid: '123' }],
-          totalcount: 1
+          totalcount: 1,
         });
-        
         await patients.searchPatients(params);
-        
         expect(mockClient.get).toHaveBeenCalledWith('/v1/195900/patients', params);
       });
 
       test('should search patients with DOB', async () => {
-        const params = { 
-          firstname: 'John', 
+        const params = {
+          firstname: 'John',
           lastname: 'Doe',
-          dob: '01/01/1980'
+          dob: '1980-01-01',
         };
         mockClient.get.mockResolvedValue({ patients: [] });
-        
         await patients.searchPatients(params);
-        
         expect(mockClient.get).toHaveBeenCalledWith('/v1/195900/patients', params);
       });
 
       test('should search with phone number', async () => {
         const params = { mobilephone: '555-1234' };
         mockClient.get.mockResolvedValue({ patients: [] });
-        
         await patients.searchPatients(params);
-        
         expect(mockClient.get).toHaveBeenCalledWith('/v1/195900/patients', params);
       });
     });
 
     describe('createPatient', () => {
       test('should create patient with required fields', async () => {
-        const patientData = { 
-          firstname: 'John', 
+        const patientData = {
+          firstname: 'John',
           lastname: 'Doe',
-          dob: '01/01/1980',
-          departmentid: '1'
+          dob: '1980-01-01',
+          departmentid: '1',
+          ssn: '777777777',
         };
         mockClient.post.mockResolvedValue({ patientid: '123' });
-        
         const result = await patients.createPatient(patientData);
-        
         expect(mockClient.post).toHaveBeenCalledWith('/v1/195900/patients', patientData);
         expect(result.patientid).toBe('123');
       });
 
       test('should create patient with full demographics', async () => {
-        const patientData = { 
-          firstname: 'John', 
+        const patientData = {
+          firstname: 'John',
           lastname: 'Doe',
-          dob: '01/01/1980',
+          dob: '1980-01-01',
           departmentid: '1',
           address1: '123 Main St',
           city: 'Boston',
           state: 'MA',
           zip: '02101',
-          mobilephone: '555-1234'
+          mobilephone: '555-1234',
+          ssn: '777777777',
         };
         mockClient.post.mockResolvedValue({ patientid: '456' });
-        
         await patients.createPatient(patientData);
-        
         expect(mockClient.post).toHaveBeenCalledWith('/v1/195900/patients', patientData);
       });
     });

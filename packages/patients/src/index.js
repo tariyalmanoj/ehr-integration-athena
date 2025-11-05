@@ -1,5 +1,6 @@
 const { BaseResource } = require('@athena-api/core');
 const Joi = require('joi');
+const querystring =require( "querystring")
 
 class PatientResource extends BaseResource {
   // Get patient by ID
@@ -19,17 +20,18 @@ class PatientResource extends BaseResource {
 
   // Create new patient
   async createPatient(patientData) {
+    const patient = querystring.parse(patientData);
     const schema = Joi.object({
-      firstname: Joi.string().required(),
+      departmentid: Joi.number().required(),
       lastname: Joi.string().required(),
-      dob: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required(), // YYYY-MM-DD
-      gender: Joi.string().valid('male', 'female', 'other').required()
-    }).required();
-
-    const { error } = schema.validate(patientData);
+      firstname: Joi.string().required(),
+      ssn: Joi.string().required(),
+      dob: Joi.string().required(),
+    }).required().unknown(true);
+    const { error } = schema.validate(patient);
     if (error) {
       throw new Error(`Invalid patient data: ${error.message}`);
-    } 
+    }
     return this.client.post(this.buildEndpoint('/patients'), patientData);
   }
 
@@ -40,6 +42,11 @@ class PatientResource extends BaseResource {
 
   // Delete patient
   async deletePatient(patientId) {
+    const schema = Joi.string().required();
+    const { error } = schema.validate(patientId);
+    if (error) {
+      throw new Error(`Invalid patientId: ${error.message}`);
+    }
     return this.client.delete(this.buildEndpoint(`/patients/${patientId}`));
   }
 
@@ -47,7 +54,7 @@ class PatientResource extends BaseResource {
   async getPatientChart(patientId, departmentId) {
     return this.client.get(
       this.buildEndpoint(`/patients/${patientId}/chart`),
-      { departmentid: departmentId }
+      { departmentid: departmentId },
     );
   }
 
@@ -65,7 +72,7 @@ class PatientResource extends BaseResource {
   async updatePatientProblem(patientId, problemId, problemData) {
     return this.client.put(
       this.buildEndpoint(`/chart/${patientId}/problems/${problemId}`),
-      problemData
+      problemData,
     );
   }
 
@@ -123,7 +130,7 @@ class PatientResource extends BaseResource {
   async createPatientInsurance(patientId, insuranceData) {
     return this.client.post(
       this.buildEndpoint(`/patients/${patientId}/insurances`),
-      insuranceData
+      insuranceData,
     );
   }
 
@@ -131,14 +138,14 @@ class PatientResource extends BaseResource {
   async updatePatientInsurance(patientId, insuranceId, insuranceData) {
     return this.client.put(
       this.buildEndpoint(`/patients/${patientId}/insurances/${insuranceId}`),
-      insuranceData
+      insuranceData,
     );
   }
 
   // Delete patient insurance
   async deletePatientInsurance(patientId, insuranceId) {
     return this.client.delete(
-      this.buildEndpoint(`/patients/${patientId}/insurances/${insuranceId}`)
+      this.buildEndpoint(`/patients/${patientId}/insurances/${insuranceId}`),
     );
   }
 
@@ -146,7 +153,7 @@ class PatientResource extends BaseResource {
   async getPatientBalance(patientId, departmentId) {
     return this.client.get(
       this.buildEndpoint(`/patients/${patientId}/collectionsbalance`),
-      { departmentid: departmentId }
+      { departmentid: departmentId },
     );
   }
 
@@ -169,7 +176,7 @@ class PatientResource extends BaseResource {
   async updatePatientSocialHistory(patientId, socialHistoryData) {
     return this.client.put(
       this.buildEndpoint(`/chart/${patientId}/socialhistory`),
-      socialHistoryData
+      socialHistoryData,
     );
   }
 
@@ -182,7 +189,7 @@ class PatientResource extends BaseResource {
   async setPatientPharmacy(patientId, pharmacyData) {
     return this.client.put(
       this.buildEndpoint(`/patients/${patientId}/preferredpharmacies`),
-      pharmacyData
+      pharmacyData,
     );
   }
 }

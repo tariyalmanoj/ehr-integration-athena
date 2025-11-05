@@ -4,7 +4,7 @@ const mockClient = {
   practiceId: '195900',
   get: jest.fn(),
   post: jest.fn(),
-  put: jest.fn()
+  put: jest.fn(),
 };
 
 describe('DepartmentResource', () => {

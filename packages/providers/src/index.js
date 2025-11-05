@@ -1,8 +1,14 @@
 const { BaseResource } = require('@athena-api/core');
+const Joi = require('joi');
 
 class ProviderResource extends BaseResource {
   // Get provider by ID
   async getProvider(providerId, params = {}) {
+    const schema = Joi.number().required();
+    const { error } = schema.validate(providerId);
+    if (error) {
+      throw new Error(`Invalid providerId: ${error.message}`);
+    }
     return this.client.get(this.buildEndpoint(`/providers/${providerId}`), params);
   }
 
@@ -18,19 +24,34 @@ class ProviderResource extends BaseResource {
 
   // Update provider
   async updateProvider(providerId, providerData) {
+    const schema = Joi.number().required();
+    const { error } = schema.validate(providerId);
+    if (error) {
+      throw new Error(`Invalid providerId: ${error.message}`);
+    }
     return this.client.put(this.buildEndpoint(`/providers/${providerId}`), providerData);
   }
 
   // Delete provider
   async deleteProvider(providerId) {
+    const schema = Joi.number().required();
+    const { error } = schema.validate(providerId);
+    if (error) {
+      throw new Error(`Invalid providerId: ${error.message}`);
+    }
     return this.client.delete(this.buildEndpoint(`/providers/${providerId}`));
   }
 
   // Get provider schedule
   async getProviderSchedule(providerId, params) {
+    const schema = Joi.number().required();
+    const { error } = schema.validate(providerId);
+    if (error) {
+      throw new Error(`Invalid providerId: ${error.message}`);
+    }
     return this.client.get(
       this.buildEndpoint(`/providers/${providerId}/appointments`),
-      params
+      params,
     );
   }
 
@@ -51,8 +72,13 @@ class ProviderResource extends BaseResource {
 
   // Get referring provider by ID
   async getReferringProvider(referringProviderId) {
+    const schema = Joi.number().required();
+    const { error } = schema.validate(referringProviderId);
+    if (error) {
+      throw new Error(`Invalid referringProviderId: ${error.message}`);
+    }
     return this.client.get(
-      this.buildEndpoint(`/referringproviders/${referringProviderId}`)
+      this.buildEndpoint(`/referringproviders/${referringProviderId}`),
     );
   }
 
@@ -63,23 +89,38 @@ class ProviderResource extends BaseResource {
 
   // Update referring provider
   async updateReferringProvider(referringProviderId, providerData) {
+    const schema = Joi.number().required();
+    const { error } = schema.validate(referringProviderId);
+    if (error) {
+      throw new Error(`Invalid referringProviderId: ${error.message}`);
+    }
     return this.client.put(
       this.buildEndpoint(`/referringproviders/${referringProviderId}`),
-      providerData
+      providerData,
     );
   }
 
   // Delete referring provider
   async deleteReferringProvider(referringProviderId) {
+    const schema = Joi.number().required();
+    const { error } = schema.validate(referringProviderId);
+    if (error) {
+      throw new Error(`Invalid referringProviderId: ${error.message}`);
+    }
     return this.client.delete(
-      this.buildEndpoint(`/referringproviders/${referringProviderId}`)
+      this.buildEndpoint(`/referringproviders/${referringProviderId}`),
     );
   }
 
   // Get provider portal enrollment
   async getProviderPortalEnrollment(providerId) {
+    const schema = Joi.number().required();
+    const { error } = schema.validate(providerId);
+    if (error) {
+      throw new Error(`Invalid providerId: ${error.message}`);
+    }
     return this.client.get(
-      this.buildEndpoint(`/providers/${providerId}/portalenrollment`)
+      this.buildEndpoint(`/providers/${providerId}/portalenrollment`),
     );
   }
 }

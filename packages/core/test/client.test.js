@@ -1,4 +1,4 @@
-const AthenaClient = require('../src/client');
+const {AthenaClient} = require('../src/client');
 const BaseResource = require('../src/base-resource');
 
 describe('AthenaClient', () => {

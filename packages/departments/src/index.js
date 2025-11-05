@@ -1,8 +1,14 @@
 const { BaseResource } = require('@athena-api/core');
+const Joi = require('joi');
 
 class DepartmentResource extends BaseResource {
   // Get department by ID
   async getDepartment(departmentId, params = {}) {
+    const schema = Joi.number().required();
+    const { error } = schema.validate(departmentId);
+    if (error) {
+      throw new Error(`Invalid departmentId: ${error.message}`);
+    }
     return this.client.get(this.buildEndpoint(`/departments/${departmentId}`), params);
   }
 
@@ -18,9 +24,14 @@ class DepartmentResource extends BaseResource {
 
   // Update department
   async updateDepartment(departmentId, departmentData) {
+    const schema = Joi.number().required();
+    const { error } = schema.validate(departmentId);
+    if (error) {
+      throw new Error(`Invalid departmentId: ${error.message}`);
+    }
     return this.client.put(
       this.buildEndpoint(`/departments/${departmentId}`),
-      departmentData
+      departmentData,
     );
   }
 
@@ -31,8 +42,13 @@ class DepartmentResource extends BaseResource {
 
   // Get department insurance packages
   async getDepartmentInsurancePackages(departmentId) {
+    const schema = Joi.number().required();
+    const { error } = schema.validate(departmentId);
+    if (error) {
+      throw new Error(`Invalid departmentId: ${error.message}`);
+    }
     return this.client.get(
-      this.buildEndpoint(`/departments/${departmentId}/insurancepackages`)
+      this.buildEndpoint(`/departments/${departmentId}/insurancepackages`),
     );
   }
 
@@ -43,17 +59,27 @@ class DepartmentResource extends BaseResource {
 
   // Get department providers
   async getDepartmentProviders(departmentId, params = {}) {
+    const schema = Joi.number().required();
+    const { error } = schema.validate(departmentId);
+    if (error) {
+      throw new Error(`Invalid departmentId: ${error.message}`);
+    }
     return this.client.get(
       this.buildEndpoint(`/departments/${departmentId}/providers`),
-      params
+      params,
     );
   }
 
   // Get appointment types for department
   async getDepartmentAppointmentTypes(departmentId, params = {}) {
+    const schema = Joi.number().required();
+    const { error } = schema.validate(departmentId);
+    if (error) {
+      throw new Error(`Invalid departmentId: ${error.message}`);
+    }
     return this.client.get(this.buildEndpoint('/appointmenttypes'), {
       departmentid: departmentId,
-      ...params
+      ...params,
     });
   }
 }

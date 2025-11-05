@@ -11,5 +11,8 @@
     "lint": "eslint src/**/*.js"
   },
   "keywords": ["athenahealth", "providers", "physicians"],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "joi": "^18.0.1"
+  }
 }
