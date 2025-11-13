@@ -11,5 +11,9 @@
     "lint": "eslint src/**/*.js"
   },
   "keywords": ["athenahealth", "encounters", "visits"],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "joi": "^18.0.1",
+    "@athena-api/core": "file:../core"
+  }
 }

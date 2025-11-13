@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "Claims management APIs for athenahealth",
   "main": "src/index.js",
-  "peerDependencies": {
-    "@athena-api/core": "^1.0.0"
+  "dependencies": {
+    "joi": "^18.0.1",
+    "@athena-api/core": "file:../core"
   },
   "scripts": {
     "test": "jest",

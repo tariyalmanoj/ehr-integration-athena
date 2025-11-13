@@ -81,7 +81,7 @@ class InsuranceResource extends BaseResource {
   async verifyPatientInsurance(patientId, params = {}) {
     return this.client.get(
       this.buildEndpoint(`/patients/${patientId}/insurances/verify`),
-      params
+      params,
     );
   }
 
