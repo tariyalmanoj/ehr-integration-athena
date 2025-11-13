@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "Department management APIs for athenahealth",
   "main": "src/index.js",
-  "peerDependencies": {
-    "@athena-api/core": "^1.0.0"
-  },
   "scripts": {
     "test": "jest",
     "lint": "eslint src/**/*.js"
@@ -13,6 +10,7 @@
   "keywords": ["athenahealth", "departments", "locations"],
   "license": "MIT",
    "dependencies": {
-    "joi": "^18.0.1"
+    "joi": "^18.0.1",
+    "@athena-api/core": "file:../core"
   }
 }
