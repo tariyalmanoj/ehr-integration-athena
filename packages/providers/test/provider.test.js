@@ -31,6 +31,12 @@ describe('ProviderResource', () => {
       expect(mockClient.get).toHaveBeenCalledWith('/v1/195900/providers', { limit: 10 });
     });
 
+    test('should list providers with default params', async () => {
+      mockClient.get.mockResolvedValue({ providers: [] });
+      await providers.listProviders();
+      expect(mockClient.get).toHaveBeenCalledWith('/v1/195900/providers', {});
+    });
+
     test('should create provider', async () => {
       const providerData = { firstname: 'Dr. John', lastname: 'Smith', npi: '1234567890' };
       mockClient.post.mockResolvedValue({ providerid: '1' });
@@ -136,6 +142,52 @@ describe('ProviderResource', () => {
       mockClient.get.mockResolvedValue({ enrolled: true });
       await providers.getProviderPortalEnrollment('1');
       expect(mockClient.get).toHaveBeenCalledWith('/v1/195900/providers/1/portalenrollment');
+    });
+  });
+
+  describe('Validation', () => {
+    test('should reject invalid providerId on get', async () => {
+      await expect(providers.getProvider('abc')).rejects.toThrow('Invalid providerId');
+    });
+
+    test('should reject invalid providerId on update', async () => {
+      await expect(providers.updateProvider(undefined, {})).rejects.toThrow(
+        'Invalid providerId',
+      );
+    });
+
+    test('should reject invalid providerId on delete', async () => {
+      await expect(providers.deleteProvider('xyz')).rejects.toThrow('Invalid providerId');
+    });
+
+    test('should reject invalid providerId on schedule', async () => {
+      await expect(providers.getProviderSchedule('nope', {})).rejects.toThrow(
+        'Invalid providerId',
+      );
+    });
+
+    test('should reject invalid referringProviderId on get', async () => {
+      await expect(providers.getReferringProvider('abc')).rejects.toThrow(
+        'Invalid referringProviderId',
+      );
+    });
+
+    test('should reject invalid referringProviderId on update', async () => {
+      await expect(providers.updateReferringProvider(undefined, {})).rejects.toThrow(
+        'Invalid referringProviderId',
+      );
+    });
+
+    test('should reject invalid referringProviderId on delete', async () => {
+      await expect(providers.deleteReferringProvider('bad')).rejects.toThrow(
+        'Invalid referringProviderId',
+      );
+    });
+
+    test('should reject invalid providerId on portal enrollment', async () => {
+      await expect(providers.getProviderPortalEnrollment('bad')).rejects.toThrow(
+        'Invalid providerId',
+      );
     });
   });
 });

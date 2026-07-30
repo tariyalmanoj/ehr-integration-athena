@@ -20,9 +20,11 @@ class PatientResource extends BaseResource {
 
   // Create new patient
   async createPatient(patientData) {
-    const patient = querystring.parse(patientData);
+    const patient = typeof patientData === 'string'
+      ? querystring.parse(patientData)
+      : { ...patientData };
     const schema = Joi.object({
-      departmentid: Joi.number().required(),
+      departmentid: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
       lastname: Joi.string().required(),
       firstname: Joi.string().required(),
       ssn: Joi.string().required(),

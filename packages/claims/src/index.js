@@ -20,11 +20,19 @@ class ClaimResource extends BaseResource {
 
   // Create claim
   async createClaim(claimData) {
-    const claim = querystring.parse(claimData);
+    const claim = typeof claimData === 'string'
+      ? querystring.parse(claimData)
+      : { ...claimData };
+
+    let claimcharges = claim.claimcharges;
+    if (typeof claimcharges === 'string') {
+      claimcharges = JSON.parse(claimcharges);
+    }
+
     const schema = Joi.object({
-      patientid: Joi.number().required(),
-      departmentid: Joi.number().required(),
-      supervisingproviderid: Joi.number().required(),
+      patientid: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
+      departmentid: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
+      supervisingproviderid: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
       claimcharges: Joi.array()
         .items(
           Joi.object({
@@ -40,7 +48,7 @@ class ClaimResource extends BaseResource {
         .min(1)
         .required(),
     }).required().unknown(true);
-    const { error } = schema.validate({...claim, claimcharges: JSON.parse(claim.claimcharges)});
+    const { error } = schema.validate({ ...claim, claimcharges });
     if (error) {
       throw new Error(`Invalid claimData: ${error.message}`);
     }

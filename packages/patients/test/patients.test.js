@@ -42,6 +42,10 @@ describe('PatientResource', () => {
           { showportalstatus: true }
         );
       });
+
+      test('should reject invalid patientId', async () => {
+        await expect(patients.getPatient(undefined)).rejects.toThrow('Invalid patientId');
+      });
     });
 
     describe('searchPatients', () => {
@@ -108,6 +112,25 @@ describe('PatientResource', () => {
         await patients.createPatient(patientData);
         expect(mockClient.post).toHaveBeenCalledWith('/v1/195900/patients', patientData);
       });
+
+      test('should create patient from querystring body', async () => {
+        const patientData = require('querystring').stringify({
+          firstname: 'John',
+          lastname: 'Doe',
+          dob: '1980-01-01',
+          departmentid: '1',
+          ssn: '777777777',
+        });
+        mockClient.post.mockResolvedValue({ patientid: '789' });
+        await patients.createPatient(patientData);
+        expect(mockClient.post).toHaveBeenCalledWith('/v1/195900/patients', patientData);
+      });
+
+      test('should reject createPatient missing required fields', async () => {
+        await expect(
+          patients.createPatient({ firstname: 'John', lastname: 'Doe' }),
+        ).rejects.toThrow('Invalid patient data');
+      });
     });
 
     describe('updatePatient', () => {
@@ -140,6 +163,10 @@ describe('PatientResource', () => {
         await patients.deletePatient('123');
         
         expect(mockClient.delete).toHaveBeenCalledWith('/v1/195900/patients/123');
+      });
+
+      test('should reject invalid patientId on delete', async () => {
+        await expect(patients.deletePatient(undefined)).rejects.toThrow('Invalid patientId');
       });
     });
   });

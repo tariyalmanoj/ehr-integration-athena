@@ -44,12 +44,12 @@ class AthenaClient {
     this.timeout = config.timeout || 60000;
     this.maxRetries = config.maxRetries || 3;
     this.debug = config.debug || false;
-    
-    this.baseUrl =config.baseUrl
-      // this.environment === 'preview'
-      // ? 'https://api.preview.platform.athenahealth.com'
-      // : 'https://api.platform.athenahealth.com';
-    
+
+    this.baseUrl = config.baseUrl
+      || (this.environment === 'preview'
+        ? 'https://api.preview.platform.athenahealth.com'
+        : 'https://api.platform.athenahealth.com');
+
     this.tokenUrl = `${this.baseUrl}/oauth2/v1/token`;
     
     this.accessToken = null;
@@ -59,7 +59,7 @@ class AthenaClient {
   }
 
   validateConfig(config) {
-    const requiredFields = ['clientId', 'clientSecret', 'environment', 'practiceId',"baseUrl"];
+    const requiredFields = ['clientId', 'clientSecret', 'environment', 'practiceId'];
     const missing = requiredFields.filter(field => !config[field]);
     
     if (missing.length > 0) {
@@ -75,7 +75,7 @@ class AthenaClient {
     const client = axios.create({
       baseURL: this.baseUrl,
       timeout: this.timeout,
-      headers: { 'Content-Type': "application/x-www-form-urlencoded" }
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
 
     // Request interceptor
@@ -156,7 +156,7 @@ class AthenaClient {
     }
 
     const { status, data } = error.response;
-    let message = 'An error occurred';
+    let message;
     let context = { type: 'API_ERROR' };
 
     // Categorize errors by status code

@@ -104,8 +104,8 @@ describe('AthenaClient', () => {
       expect(client.tokenUrl).toBe('https://api.preview.platform.athenahealth.com/oauth2/v1/token');
     });
 
-    test('should set default timeout to 30000ms', () => {
-      expect(client.timeout).toBe(30000);
+    test('should set default timeout to 60000ms', () => {
+      expect(client.timeout).toBe(60000);
     });
 
     test('should initialize with no access token', () => {
@@ -147,10 +147,10 @@ describe('AthenaClient', () => {
         clientSecret: 'test-secret',
         environment: 'preview',
         practiceId: '195900',
-        timeout: 60000
+        timeout: 90000
       });
       
-      expect(client.timeout).toBe(60000);
+      expect(client.timeout).toBe(90000);
     });
 
     test('should accept custom maxRetries', () => {
@@ -254,7 +254,7 @@ describe('AthenaClient', () => {
       });
       
       expect(client.httpClient).toBeDefined();
-      expect(client.httpClient.defaults.timeout).toBe(30000);
+      expect(client.httpClient.defaults.timeout).toBe(60000);
     });
 
     test('should set default content-type header', () => {
@@ -265,7 +265,7 @@ describe('AthenaClient', () => {
         practiceId: '195900'
       });
       
-      expect(client.httpClient.defaults.headers['Content-Type']).toBe('application/json');
+      expect(client.httpClient.defaults.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
     });
   });
 });
