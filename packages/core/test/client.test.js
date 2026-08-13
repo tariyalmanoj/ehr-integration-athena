@@ -228,7 +228,7 @@ describe('AthenaClient', () => {
 
     test('should handle paths without leading slash', () => {
       const endpoint = client.buildEndpoint('patients');
-      expect(endpoint).toBe('/v1/195900patients');
+      expect(endpoint).toBe('/v1/195900/patients');
     });
 
     test('should work with different practice IDs', () => {
@@ -241,6 +241,45 @@ describe('AthenaClient', () => {
       
       const endpoint = client2.buildEndpoint('/providers');
       expect(endpoint).toBe('/v1/999999/providers');
+    });
+
+    test('should handle paths with trailing slash', () => {
+      const endpoint = client.buildEndpoint('/patients/');
+      expect(endpoint).toBe('/v1/195900/patients/');
+    });
+
+    test('should handle paths with extra slashes', () => {
+      const endpoint = client.buildEndpoint('//patients//');
+      expect(endpoint).toBe('/v1/195900/patients/');
+    });
+
+    test('should throw error for empty path', () => {
+      expect(() => {
+        client.buildEndpoint('');
+      }).toThrow('Path must be a non-empty string');
+    });
+
+    test('should throw error for null path', () => {
+      expect(() => {
+        client.buildEndpoint(null);
+      }).toThrow('Path must be a non-empty string');
+    });
+
+    test('should throw error for undefined path', () => {
+      expect(() => {
+        client.buildEndpoint(undefined);
+      }).toThrow('Path must be a non-empty string');
+    });
+
+    test('should throw error for number path', () => {
+      expect(() => {
+        client.buildEndpoint(123);
+      }).toThrow('Path must be a non-empty string');
+    });
+
+    test('should handle paths with leading/trailing whitespace', () => {
+      const endpoint = client.buildEndpoint('  /patients/  ');
+      expect(endpoint).toBe('/v1/195900/patients/');
     });
   });
 

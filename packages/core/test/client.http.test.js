@@ -146,11 +146,12 @@ describe('AthenaClient HTTP and auth', () => {
 
     const client = new AthenaClient({ ...validConfig, debug: true });
     await client.authenticate();
-    expect(logSpy).toHaveBeenCalledWith('[Auth] Token acquired');
+    expect(logSpy).toHaveBeenCalledWith(expect.stringMatching(/\[Auth\] Token acquired/));
 
     const config = { headers: {}, method: 'get', url: '/x' };
     await requestInterceptor(config);
-    expect(logSpy).toHaveBeenCalledWith('[Request]', 'GET', '/x');
+    expect(logSpy).toHaveBeenCalledWith(expect.stringMatching(/\[GET\]/));
+    expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('/x'));
 
     client.sleep = jest.fn().mockResolvedValue();
     mockHttpClient.mockResolvedValue({ data: {} });
@@ -158,7 +159,7 @@ describe('AthenaClient HTTP and auth', () => {
       config: { url: '/retry' },
       response: { status: 503, data: {}, headers: {} },
     });
-    expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('[Retry'), '/retry');
+    expect(logSpy).toHaveBeenCalledWith(expect.stringMatching(/\[Retry \d+\/\d+\]/));
     logSpy.mockRestore();
   });
 
@@ -173,7 +174,8 @@ describe('AthenaClient HTTP and auth', () => {
     new AthenaClient({ ...validConfig, debug: true });
     const response = { status: 200, config: { url: '/ok' } };
     expect(responseSuccess(response)).toBe(response);
-    expect(logSpy).toHaveBeenCalledWith('[Response]', 200, '/ok');
+    expect(logSpy).toHaveBeenCalledWith(expect.stringMatching(/\[200\]/));
+    expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('/ok'));
     logSpy.mockRestore();
   });
 
