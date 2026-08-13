@@ -1,6 +1,87 @@
 const axios = require('axios');
 const qs = require('qs');
 const winston = require('winston');
+
+/**
+ * Format timestamp for logging
+ * @returns {string} ISO timestamp with milliseconds
+ */
+function getTimestamp() {
+  return new Date().toISOString();
+}
+
+/**
+ * Log request details to console when debug mode is enabled
+ * @param {Object} config - Axios request configuration
+ * @param {boolean} debug - Whether debug mode is enabled
+ */
+function logRequest(config, debug) {
+  if (!debug) return;
+  
+  const timestamp = getTimestamp();
+  const method = config.method.toUpperCase();
+  const url = config.url || '';
+  const params = config.params ? JSON.stringify(config.params) : '{}';
+  
+  console.log(`[${timestamp}] [${method}] ${url} Params: ${params}`);
+}
+
+/**
+ * Log response details to console when debug mode is enabled
+ * @param {Object} response - Axios response object
+ * @param {boolean} debug - Whether debug mode is enabled
+ */
+function logResponse(response, debug) {
+  if (!debug) return;
+  
+  const timestamp = getTimestamp();
+  const status = response.status;
+  const url = response.config.url || '';
+  const headers = response.headers ? JSON.stringify(response.headers) : '{}';
+  
+  console.log(`[${timestamp}] [${status}] ${url} Headers: ${headers}`);
+}
+
+/**
+ * Log error details to console when debug mode is enabled
+ * @param {Object} error - Error object
+ * @param {boolean} debug - Whether debug mode is enabled
+ */
+function logError(error, debug) {
+  if (!debug) return;
+  
+  const timestamp = getTimestamp();
+  const message = error.message || 'Unknown error';
+  const stack = error.stack ? error.stack.split('\n').slice(0, 3).join('\n') : '';
+  
+  console.error(`[${timestamp}] [ERROR] ${message}\n${stack}`);
+}
+
+/**
+ * Log retry attempt to console when debug mode is enabled
+ * @param {number} attempt - Current attempt number
+ * @param {number} maxRetries - Maximum retries allowed
+ * @param {string} url - Request URL
+ * @param {boolean} debug - Whether debug mode is enabled
+ */
+function logRetry(attempt, maxRetries, url, debug) {
+  if (!debug) return;
+  
+  const timestamp = getTimestamp();
+  console.log(`[${timestamp}] [Retry ${attempt}/${maxRetries}] Retrying: ${url}`);
+}
+
+/**
+ * Log authentication events to console when debug mode is enabled
+ * @param {string} message - Message to log
+ * @param {boolean} debug - Whether debug mode is enabled
+ */
+function logAuth(message, debug) {
+  if (!debug) return;
+  
+  const timestamp = getTimestamp();
+  console.log(`[${timestamp}] [Auth] ${message}`);
+}
 /**
  * Custom error class for AthenaHealth API errors
  */
@@ -84,9 +165,7 @@ class AthenaClient {
         await this.ensureValidToken();
         config.headers.Authorization = `Bearer ${this.accessToken}`;
         
-        if (this.debug) {
-          console.log('[Request]', config.method.toUpperCase(), config.url);
-        }
+        logRequest(config, this.debug);
         
         return config;
       },
@@ -96,12 +175,11 @@ class AthenaClient {
     // Response interceptor - ERROR HANDLING
     client.interceptors.response.use(
       (response) => {
-        if (this.debug) {
-          console.log('[Response]', response.status, response.config.url);
-        }
+        logResponse(response, this.debug);
         return response;
       },
       async (error) => {
+        logError(error, this.debug);
         return this.handleResponseError(error);
       }
     );
@@ -122,9 +200,7 @@ class AthenaClient {
         const delay = Math.pow(2, error.config._retryCount) * 1000;
         await this.sleep(delay);
         
-        if (this.debug) {
-          console.log(`[Retry ${error.config._retryCount}/${this.maxRetries}]`, error.config.url);
-        }
+        logRetry(error.config._retryCount, this.maxRetries, error.config.url, this.debug);
         
         return this.httpClient(error.config);
       }
@@ -226,9 +302,7 @@ class AthenaClient {
       // 1 minute buffer before actual expiry
       this.tokenExpiry = Date.now() + (response.data.expires_in * 1000) - 60000;
 
-      if (this.debug) {
-        console.log('[Auth] Token acquired');
-      }
+      logAuth('Token acquired', this.debug);
     } catch (error) {
       throw new AthenaAPIError(
         `Authentication failed: ${error.response?.data?.error_description || error.message}`,
@@ -243,8 +317,27 @@ class AthenaClient {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  /**
+   * Build endpoint with practice ID and path normalization
+   * @param {string} path - API path (with or without leading slash)
+   * @returns {string} Full endpoint URL
+   */
   buildEndpoint(path) {
-    return `/v1/${this.practiceId}${path}`;
+    // Validate input
+    if (!path || typeof path !== 'string') {
+      throw new Error('Path must be a non-empty string');
+    }
+    
+    // Trim whitespace
+    const normalizedPath = path.trim();
+    
+    // Remove leading slashes and split into segments
+    let cleanPath = normalizedPath.replace(/^\/+/, '');
+    
+    // Replace multiple consecutive slashes with single slash
+    cleanPath = cleanPath.replace(/\/+/g, '/');
+    
+    return `/v1/${this.practiceId}/${cleanPath}`;
   }
 
   async get(endpoint, params = {}) {

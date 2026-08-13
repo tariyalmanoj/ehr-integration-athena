@@ -14,12 +14,26 @@ class BaseResource {
   }
 
   /**
-   * Build endpoint with practice ID
-   * @param {string} path - API path
-   * @returns {string} Full endpoint
+   * Build endpoint with practice ID and path normalization
+   * @param {string} path - API path (with or without leading slash)
+   * @returns {string} Full endpoint URL
    */
   buildEndpoint(path) {
-    return `/v1/${this.client.practiceId}${path}`;
+    // Validate input
+    if (!path || typeof path !== 'string') {
+      throw new Error('Path must be a non-empty string');
+    }
+    
+    // Trim whitespace
+    const normalizedPath = path.trim();
+    
+    // Remove leading slashes and split into segments
+    let cleanPath = normalizedPath.replace(/^\/+/, '');
+    
+    // Replace multiple consecutive slashes with single slash
+    cleanPath = cleanPath.replace(/\/+/g, '/');
+    
+    return `/v1/${this.client.practiceId}/${cleanPath}`;
   }
 
   /**
